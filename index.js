@@ -43,6 +43,15 @@ async function run() {
       const result = await propertiesCollection.find().toArray();
       res.send(result)
     });
+    // get single properties with agent email 
+    app.get('/api/getProperty',async(req,res)=>{
+      const email = req.query.email;
+      console.log(email);
+      const query = {agentEmail:email}
+      const result = await propertiesCollection.find(query).toArray()
+      console.log(result);
+      res.send(result)
+    })
     // get singleProduct
     app.get('/api/detailProperty/:id',async(req,res)=>{
       const id = req.params.id;
@@ -71,7 +80,14 @@ async function run() {
     // Create Review 
     app.post('/api/addReview',async(req,res)=>{
       const review = req.body;
-      const result = await reviewCollection.insertOne(data)
+      const result = await reviewCollection.insertOne(review)
+      res.send(result)
+    })
+
+    app.delete('/property/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id:new ObjectId(id)}
+      const result = await propertiesCollection.deleteOne(query)
       res.send(result)
     })
 
