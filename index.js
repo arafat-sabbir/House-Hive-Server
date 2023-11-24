@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db("EchoState").collection("users");
+    const reviewCollection = client.db("EchoState").collection("reviews");
     const propertiesCollection = client
       .db("EchoState")
       .collection("Properties");
@@ -42,6 +43,13 @@ async function run() {
       const result = await propertiesCollection.find().toArray();
       res.send(result)
     });
+    // get singleProduct
+    app.get('/api/detailProperty/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id:new ObjectId(id)}
+      const result = await propertiesCollection.findOne(query)
+      res.send(result)
+    })
     // create user
     app.post("/api/users", async (req, res) => {
       try {
@@ -60,6 +68,12 @@ async function run() {
         console.log(error);
       }
     });
+    // Create Review 
+    app.post('/api/addReview',async(req,res)=>{
+      const review = req.body;
+      const result = await reviewCollection.insertOne(data)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
