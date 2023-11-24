@@ -38,6 +38,16 @@ async function run() {
       const result = await userCollection.findOne(query);
       res.send(result);
     });
+    // Get all the user data for admin 
+    app.get('/api/getallUsers',async(req,res)=>{
+      const result = await userCollection.find().toArray()
+      res.send(result)
+    })
+    // Get all the review data for admin 
+    app.get('/api/getallReviews',async(req,res)=>{
+      const result = await reviewCollection.find().toArray()
+      res.send(result)
+    })
     // get all the properties
     app.get("/api/getProperties", async (req, res) => {
       const result = await propertiesCollection.find().toArray();
@@ -83,8 +93,30 @@ async function run() {
       const result = await reviewCollection.insertOne(review)
       res.send(result)
     })
-
-    app.delete('/property/:id',async(req,res)=>{
+    // Add Property by agent
+    app.post('/api/addProperty',async(req,res)=>{
+      const propertyDetail = req.body;
+      const result = await propertiesCollection.insertOne(propertyDetail)
+      res.send(result)
+    })
+    // update agent Property
+    app.patch('/api/updateProperty/:id',async(req,res)=>{
+      const updatedData = req.body;
+      const id = req.params.id;
+      const query = {_id:new ObjectId(id)}
+      const updateDoc = {
+        $set:{
+          propertyImage:updatedData.propertyImage,
+          propertyTitle:updatedData.propertyTitle,
+          propertyLocation:updatedData.propertyLocation,
+          propertyPriceRange:updatedData.propertyPriceRange
+        }
+      }
+      const result = await propertiesCollection.updateOne(query,updateDoc)
+      res.send(result)
+    })
+    // delete agent property
+    app.delete('/api/delete-property/:id',async(req,res)=>{
       const id = req.params.id;
       const query = {_id:new ObjectId(id)}
       const result = await propertiesCollection.deleteOne(query)
