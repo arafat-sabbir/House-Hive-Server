@@ -32,7 +32,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const userCollection = client.db("EchoState").collection("users");
     const reviewCollection = client.db("EchoState").collection("reviews");
@@ -102,18 +102,18 @@ async function run() {
       res.send(result);
     });
     // Ger Property Bought for user
-    app.get("/api/getboughtProperty",async(req,res)=>{
+    app.get("/api/getboughtProperty", async (req, res) => {
       const email = req.query.email;
-      const query = {buyerEmail:email}
-      const result =await offersCollection.find(query).toArray()
-      res.send(result)
-    })
-    app.get('/api/getRequestedProperty',async(req,res)=>{
+      const query = { buyerEmail: email };
+      const result = await offersCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.get("/api/getRequestedProperty", async (req, res) => {
       const email = req.query.email;
-      const query = {agentEmail:email}
-      const result = await offersCollection.find(query).toArray()
-      res.send(result)
-    })
+      const query = { agentEmail: email };
+      const result = await offersCollection.find(query).toArray();
+      res.send(result);
+    });
     // create user
     app.post("/api/users", async (req, res) => {
       try {
@@ -140,11 +140,11 @@ async function run() {
       console.log(wishlist, result);
     });
     // add offer to offercollection
-    app.post('/api/addOffer',async(req,res)=>{
+    app.post("/api/addOffer", async (req, res) => {
       const offer = req.body;
-      const result = await offersCollection.insertOne(offer)
-      res.send(result)
-    })
+      const result = await offersCollection.insertOne(offer);
+      res.send(result);
+    });
     // Create Review
     app.post("/api/addReview", async (req, res) => {
       const review = req.body;
@@ -155,6 +155,37 @@ async function run() {
     app.post("/api/addProperty", async (req, res) => {
       const propertyDetail = req.body;
       const result = await propertiesCollection.insertOne(propertyDetail);
+      res.send(result);
+    });
+    // change user role based on admin request
+    app.patch("/api/changeRole/:id", async (req, res) => {
+      const id = req.params.id;
+      const newrole = req.query.role;
+      console.log(newrole);
+      const query = { _id: new ObjectId(id) };
+      const updatedRole = {
+        $set: {
+          role: newrole,
+        },
+      };
+      const result = await userCollection.updateOne(query, updatedRole);
+      res.send(result);
+    });
+    // mark a agent as fraud and delete all the data of that agent from database
+    app.patch("/api/makeFraud/:id", async (req, res) => {
+      const id = req.params.id;
+      const newrole = req.query.role;
+      const email = req.query.email;
+      console.log(newrole);
+      const query = { _id: new ObjectId(id) };
+      const updatedRole = {
+        $set: {
+          role: newrole,
+        },
+      };
+      const filter = {agentEmail: email};
+      const result = await userCollection.updateOne(query, updatedRole);
+      const result2 = await propertiesCollection.deleteMany(filter)
       res.send(result);
     });
     // update agent Property
@@ -174,6 +205,8 @@ async function run() {
       res.send(result);
     });
 
+    // update a verification status based on admin response 
+
     // delete agent property
     app.delete("/api/delete-property/:id", async (req, res) => {
       const id = req.params.id;
@@ -182,12 +215,12 @@ async function run() {
       res.send(result);
     });
     // delete a specific wish
-    app.delete('/api/delete-wish/:id',async(req,res)=>{
-      const id = req.params.id
-      const query = {_id:new ObjectId(id)}
-      const result = await wishCollection.deleteOne(query)
-      res.send(result)
-    })
+    app.delete("/api/delete-wish/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await wishCollection.deleteOne(query);
+      res.send(result);
+    });
     // delete a specific review
     app.delete("/api/delete-review/:id", async (req, res) => {
       const id = req.params.id;
@@ -195,9 +228,16 @@ async function run() {
       const result = await reviewCollection.deleteOne(query);
       res.send(result);
     });
+    // deleting a specific user
+    app.delete("/api/delete-User/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
