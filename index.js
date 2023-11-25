@@ -11,7 +11,7 @@ app.use(
     origin: [
       "https://echo-state.web.app",
       "https://cute-hotteok-edc7ca.netlify.app",
-      "http://localhost:5173"
+      "http://localhost:5173",
     ],
     credentials: true,
   })
@@ -36,6 +36,7 @@ async function run() {
 
     const userCollection = client.db("EchoState").collection("users");
     const reviewCollection = client.db("EchoState").collection("reviews");
+    const offersCollection = client.db("EchoState").collection("offers");
     const wishCollection = client.db("EchoState").collection("wish");
     const propertiesCollection = client
       .db("EchoState")
@@ -55,12 +56,12 @@ async function run() {
     });
 
     // get single review for user my review
-    app.get('/api/getUserReview',async(req,res)=>{
+    app.get("/api/getUserReview", async (req, res) => {
       const email = req.query.email;
-      const query = {reviewerEmail:email}
-      const result = await reviewCollection.find(query).toArray()
-      res.send(result)
-    })
+      const query = { reviewerEmail: email };
+      const result = await reviewCollection.find(query).toArray();
+      res.send(result);
+    });
     // Get all the review data for admin
     app.get("/api/getallReviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
@@ -88,12 +89,18 @@ async function run() {
       res.send(result);
     });
     // get wishlist for logged in user
-    app.get('/api/getWishlist',async(req,res)=>{
-      const email = req.query.email
-      const query = {wishedEmail:email}
-      const result = await wishCollection.find(query).toArray()
-      res.send(result)
-    })
+    app.get("/api/getWishlist", async (req, res) => {
+      const email = req.query.email;
+      const query = { wishedEmail: email };
+      const result = await wishCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.get("/api/getWish/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await wishCollection.findOne(query);
+      res.send(result);
+    });
     // create user
     app.post("/api/users", async (req, res) => {
       try {
@@ -113,11 +120,17 @@ async function run() {
       }
     });
     // Add to use WishList
-    app.post('/api/addToWishlist',async(req,res)=>{
+    app.post("/api/addToWishlist", async (req, res) => {
       const wishlist = req.body;
-      const result  = await wishCollection.insertOne(wishlist)
+      const result = await wishCollection.insertOne(wishlist);
+      res.send(result);
+      console.log(wishlist, result);
+    });
+    // add offer to offercollection
+    app.post('/api/addOffer',async(req,res)=>{
+      const offer = req.body;
+      const result = await offersCollection.insertOne(offer)
       res.send(result)
-      console.log(wishlist,result);
     })
     // Create Review
     app.post("/api/addReview", async (req, res) => {
@@ -147,7 +160,7 @@ async function run() {
       const result = await propertiesCollection.updateOne(query, updateDoc);
       res.send(result);
     });
-    
+
     // delete agent property
     app.delete("/api/delete-property/:id", async (req, res) => {
       const id = req.params.id;
@@ -155,13 +168,13 @@ async function run() {
       const result = await propertiesCollection.deleteOne(query);
       res.send(result);
     });
-    // delete a specific review 
-    app.delete('/api/delete-review/:id',async(req,res)=>{
+    // delete a specific review
+    app.delete("/api/delete-review/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id:new ObjectId(id)}
-      const result = await reviewCollection.deleteOne(query)
-      res.send(result)
-    })
+      const query = { _id: new ObjectId(id) };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
