@@ -72,6 +72,12 @@ async function run() {
       const result = await propertiesCollection.find().toArray();
       res.send(result);
     });
+// get the properties that are verified
+    app.get("/api/getVerifiedProperties", async (req, res) => {
+      const query = {propertyVerificationStatus:"verified"}
+      const result = await propertiesCollection.find(query).toArray();
+      res.send(result);
+    });
     // get single properties with agent email
     app.get("/api/getProperty", async (req, res) => {
       const email = req.query.email;
