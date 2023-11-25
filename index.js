@@ -101,6 +101,13 @@ async function run() {
       const result = await wishCollection.findOne(query);
       res.send(result);
     });
+    // Ger Property Bought for user
+    app.get("/api/getboughtProperty",async(req,res)=>{
+      const email = req.query.email;
+      const query = {buyerEmail:email}
+      const result =await offersCollection.find(query).toArray()
+      res.send(result)
+    })
     // create user
     app.post("/api/users", async (req, res) => {
       try {
