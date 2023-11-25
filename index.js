@@ -87,6 +87,13 @@ async function run() {
       const result = await propertiesCollection.findOne(query);
       res.send(result);
     });
+    // get wishlist for logged in user
+    app.get('/api/getWishlist',async(req,res)=>{
+      const email = req.query.email
+      const query = {wishedEmail:email}
+      const result = await wishCollection.find(query).toArray()
+      res.send(result)
+    })
     // create user
     app.post("/api/users", async (req, res) => {
       try {
@@ -105,6 +112,13 @@ async function run() {
         console.log(error);
       }
     });
+    // Add to use WishList
+    app.post('/api/addToWishlist',async(req,res)=>{
+      const wishlist = req.body;
+      const result  = await wishCollection.insertOne(wishlist)
+      res.send(result)
+      console.log(wishlist,result);
+    })
     // Create Review
     app.post("/api/addReview", async (req, res) => {
       const review = req.body;
@@ -133,6 +147,7 @@ async function run() {
       const result = await propertiesCollection.updateOne(query, updateDoc);
       res.send(result);
     });
+    
     // delete agent property
     app.delete("/api/delete-property/:id", async (req, res) => {
       const id = req.params.id;
@@ -141,7 +156,7 @@ async function run() {
       res.send(result);
     });
     // delete a specific review 
-    app.delete('/api/deleteReview/:id',async(req,res)=>{
+    app.delete('/api/delete-review/:id',async(req,res)=>{
       const id = req.params.id;
       const query = {_id:new ObjectId(id)}
       const result = await reviewCollection.deleteOne(query)
