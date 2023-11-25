@@ -108,6 +108,12 @@ async function run() {
       const result =await offersCollection.find(query).toArray()
       res.send(result)
     })
+    app.get('/api/getRequestedProperty',async(req,res)=>{
+      const email = req.query.email;
+      const query = {agentEmail:email}
+      const result = await offersCollection.find(query).toArray()
+      res.send(result)
+    })
     // create user
     app.post("/api/users", async (req, res) => {
       try {
@@ -175,6 +181,13 @@ async function run() {
       const result = await propertiesCollection.deleteOne(query);
       res.send(result);
     });
+    // delete a specific wish
+    app.delete('/api/delete-wish/:id',async(req,res)=>{
+      const id = req.params.id
+      const query = {_id:new ObjectId(id)}
+      const result = await wishCollection.deleteOne(query)
+      res.send(result)
+    })
     // delete a specific review
     app.delete("/api/delete-review/:id", async (req, res) => {
       const id = req.params.id;
