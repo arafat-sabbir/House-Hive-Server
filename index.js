@@ -66,36 +66,38 @@ async function run() {
       res.send(result);
     });
     // Get all the user data for admin
-    app.get("/api/getallUsers", async (req, res) => {
+    app.get("/api/getallUsers", tokenVerify, async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     });
 
     // get single review for user my review
-    app.get("/api/getUserReview", async (req, res) => {
+    app.get("/api/getUserReview", tokenVerify, async (req, res) => {
       const email = req.query.email;
       const query = { reviewerEmail: email };
       const result = await reviewCollection.find(query).toArray();
       res.send(result);
     });
     // Get all the review data for admin
-    app.get("/api/getallReviews", async (req, res) => {
-      const result = await reviewCollection.find().toArray();
+    app.get("/api/getallReviews", tokenVerify, async (req, res) => {
+      let sort = {};
+      sort["reviewDate"] = "desc";
+      const result = await reviewCollection.find().sort(sort).toArray();
       res.send(result);
     });
     // get all the properties
-    app.get("/api/getProperties", async (req, res) => {
+    app.get("/api/getProperties",async (req, res) => {
       const result = await propertiesCollection.find().toArray();
       res.send(result);
     });
     // get the properties that are verified
-    app.get("/api/getVerifiedProperties", async (req, res) => {
+    app.get("/api/getVerifiedProperties", tokenVerify, async (req, res) => {
       const query = { propertyVerificationStatus: "verified" };
       const result = await propertiesCollection.find(query).toArray();
       res.send(result);
     });
     // get single properties with agent email
-    app.get("/api/getProperty", async (req, res) => {
+    app.get("/api/getProperty", tokenVerify, async (req, res) => {
       const email = req.query.email;
       console.log(email);
       const query = { agentEmail: email };
@@ -118,35 +120,35 @@ async function run() {
       res.send(result);
     });
     // get wishlist for make an offer
-    app.get("/api/getWish/:id", async (req, res) => {
+    app.get("/api/getWish/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await wishCollection.findOne(query);
       res.send(result);
     });
     // Ger Property Bought for user
-    app.get("/api/getboughtProperty", async (req, res) => {
+    app.get("/api/getboughtProperty", tokenVerify, async (req, res) => {
       const email = req.query.email;
       const query = { buyerEmail: email };
       const result = await offersCollection.find(query).toArray();
       res.send(result);
     });
     // get requested property for agent
-    app.get("/api/getRequestedProperty", async (req, res) => {
+    app.get("/api/getRequestedProperty", tokenVerify, async (req, res) => {
       const email = req.query.email;
       const query = { agentEmail: email };
       const result = await offersCollection.find(query).toArray();
       res.send(result);
     });
     // Get a specific offer data for Payment
-    app.get("/api/getOfferData/:id", async (req, res) => {
+    app.get("/api/getOfferData/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await offersCollection.findOne(query);
       res.send(result);
     });
     // Get sold properties for agent
-    app.get("/api/getSoldProperties", async (req, res) => {
+    app.get("/api/getSoldProperties", tokenVerify, async (req, res) => {
       const email = req.query.email;
       const query = {
         agentEmail: email,
@@ -156,10 +158,24 @@ async function run() {
       res.send(result);
     });
     // Get verified Property for advertise
-    app.get("/api/getVerifiedProperty", async (req, res) => {
-      const query = {propertyVerificationStatus: "verified",};
-      const result = await propertiesCollection.find(query).toArray()
-      res.send(result)
+    app.get("/api/getVerifiedProperty", tokenVerify, async (req, res) => {
+      const query = { propertyVerificationStatus: "verified" };
+      const result = await propertiesCollection.find(query).toArray();
+      res.send(result);
+    });
+    // Get advertise Property for advertise home section
+    app.get("/api/getAdvertiseProperty", tokenVerify, async (req, res) => {
+      const query = { advertiseStatus: "advertise" };
+      const result = await propertiesCollection.find(query).toArray();
+      res.send(result);
+    });
+    // Get review for specific property
+    app.get("/api/getpropertyReview", tokenVerify, async (req, res) => {
+      const id = req.query.propertyId;
+      console.log(id);
+      const query = { propertyId: id };
+      const result = await reviewCollection.find(query).toArray();
+      res.send(result);
     });
     // make a token for successfully user login
     app.post("/api/user/accessToken", async (req, res) => {
@@ -175,7 +191,7 @@ async function run() {
       }
     });
     // Create Payment Intenet For User Pay
-    app.post("/api/createPaymentIntent", async (req, res) => {
+    app.post("/api/createPaymentIntent", tokenVerify, async (req, res) => {
       const { price } = req.body;
       const amount = parseInt(price * 100);
       const paymentIntent = await stripe.paymentIntents.create({
@@ -188,7 +204,7 @@ async function run() {
       });
     });
     // update offer status
-    app.patch("/api/updateOfferStatus/:id", async (req, res) => {
+    app.patch("/api/updateOfferStatus/:id", tokenVerify, async (req, res) => {
       const updatedData = req.body;
       console.log(updatedData.status);
       const id = req.params.id;
@@ -210,7 +226,7 @@ async function run() {
       res.send(result);
     });
     // create user
-    app.post("/api/users", async (req, res) => {
+    app.post("/api/users", tokenVerify, async (req, res) => {
       try {
         const userData = req.body;
         const email = req.query.email;
@@ -226,31 +242,31 @@ async function run() {
       }
     });
     // Add to use WishList
-    app.post("/api/addToWishlist", async (req, res) => {
+    app.post("/api/addToWishlist", tokenVerify, async (req, res) => {
       const wishlist = req.body;
       const result = await wishCollection.insertOne(wishlist);
       res.send(result);
     });
     // add offer to offercollection
-    app.post("/api/addOffer", async (req, res) => {
+    app.post("/api/addOffer", tokenVerify, async (req, res) => {
       const offer = req.body;
       const result = await offersCollection.insertOne(offer);
       res.send(result);
     });
     // Create Review
-    app.post("/api/addReview", async (req, res) => {
+    app.post("/api/addReview", tokenVerify, async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
     // Add Property by agent
-    app.post("/api/addProperty", async (req, res) => {
+    app.post("/api/addProperty", tokenVerify, async (req, res) => {
       const propertyDetail = req.body;
       const result = await propertiesCollection.insertOne(propertyDetail);
       res.send(result);
     });
     // change user role based on admin request
-    app.patch("/api/changeRole/:id", async (req, res) => {
+    app.patch("/api/changeRole/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const newrole = req.query.role;
       const query = { _id: new ObjectId(id) };
@@ -263,7 +279,7 @@ async function run() {
       res.send(result);
     });
     // mark a agent as fraud and delete all the data of that agent from database
-    app.patch("/api/makeFraud/:id", async (req, res) => {
+    app.patch("/api/makeFraud/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const newrole = req.query.role;
       const email = req.query.email;
@@ -279,7 +295,7 @@ async function run() {
       res.send(result);
     });
     // Update the Property Verification status Based On admin Action
-    app.patch("/api/updateStatus/:id", async (req, res) => {
+    app.patch("/api/updateStatus/:id", tokenVerify, async (req, res) => {
       const status = req.query.status;
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -291,7 +307,7 @@ async function run() {
       const result = await propertiesCollection.updateOne(query, updateStatus);
       res.send(result);
     });
-    app.patch("/api/updateAdvertise/:id", async (req, res) => {
+    app.patch("/api/updateAdvertise/:id", tokenVerify, async (req, res) => {
       const status = req.query.advertiseStatus;
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -301,11 +317,15 @@ async function run() {
           advertiseStatus: status,
         },
       };
-      const result = await propertiesCollection.updateOne(query, updateStatus,options);
+      const result = await propertiesCollection.updateOne(
+        query,
+        updateStatus,
+        options
+      );
       res.send(result);
     });
     // Update a OfferStatus For agent
-    app.patch("/api/updateOffer/:id", async (req, res) => {
+    app.patch("/api/updateOffer/:id", tokenVerify, async (req, res) => {
       const status = req.query.status;
       const propertyId = req.query.propertyId;
       const id = req.params.id;
@@ -329,7 +349,7 @@ async function run() {
       res.send(result);
     });
     // update agent Property
-    app.patch("/api/updateProperty/:id", async (req, res) => {
+    app.patch("/api/updateProperty/:id", tokenVerify, async (req, res) => {
       const updatedData = req.body;
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -348,28 +368,28 @@ async function run() {
     // update a verification status based on admin response
 
     // delete agent property
-    app.delete("/api/delete-property/:id", async (req, res) => {
+    app.delete("/api/delete-property/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await propertiesCollection.deleteOne(query);
       res.send(result);
     });
     // delete a specific wish
-    app.delete("/api/delete-wish/:id", async (req, res) => {
+    app.delete("/api/delete-wish/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await wishCollection.deleteOne(query);
       res.send(result);
     });
     // delete a specific review
-    app.delete("/api/delete-review/:id", async (req, res) => {
+    app.delete("/api/delete-review/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await reviewCollection.deleteOne(query);
       res.send(result);
     });
     // deleting a specific user
-    app.delete("/api/delete-User/:id", async (req, res) => {
+    app.delete("/api/delete-User/:id", tokenVerify, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await userCollection.deleteOne(query);
