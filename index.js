@@ -152,7 +152,13 @@ async function run() {
         agentEmail: email,
         payment: "completed",
       };
-      const result = await offersCollection.find(query).toArray()
+      const result = await offersCollection.find(query).toArray();
+      res.send(result);
+    });
+    // Get verified Property for advertise
+    app.get("/api/getVerifiedProperty", async (req, res) => {
+      const query = {propertyVerificationStatus: "verified",};
+      const result = await propertiesCollection.find(query).toArray()
       res.send(result)
     });
     // make a token for successfully user login
@@ -283,6 +289,19 @@ async function run() {
         },
       };
       const result = await propertiesCollection.updateOne(query, updateStatus);
+      res.send(result);
+    });
+    app.patch("/api/updateAdvertise/:id", async (req, res) => {
+      const status = req.query.advertiseStatus;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateStatus = {
+        $set: {
+          advertiseStatus: status,
+        },
+      };
+      const result = await propertiesCollection.updateOne(query, updateStatus,options);
       res.send(result);
     });
     // Update a OfferStatus For agent
