@@ -91,7 +91,7 @@ async function run() {
       res.send(result);
     });
     // get the properties that are verified
-    app.get("/api/getVerifiedProperties", tokenVerify, async (req, res) => {
+    app.get("/api/getVerifiedProperties", async (req, res) => {
       const query = { propertyVerificationStatus: "verified" };
       const result = await propertiesCollection.find(query).toArray();
       res.send(result);
@@ -164,11 +164,29 @@ async function run() {
       res.send(result);
     });
     // Get advertise Property for advertise home section
-    app.get("/api/getAdvertiseProperty", tokenVerify, async (req, res) => {
+    app.get("/api/getAdvertiseProperty", async (req, res) => {
       const query = { advertiseStatus: "advertise" };
       const result = await propertiesCollection.find(query).toArray();
       res.send(result);
     });
+    app.patch("/api/agentRequest/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options =  { upsert: true };
+      const agentReq = {
+        $set: {
+          agentReq:"true"
+        },
+      };
+      const result = await userCollection.updateOne(query, agentReq,options);
+      res.send(result);
+    });
+
+    app.get('/api/agentReq',async(req,res)=>{
+      const query = {agentReq : "true"}
+      const result = await userCollection.find(query).toArray()
+      res.send(result)
+    })
     // Get review for specific property
     app.get("/api/getpropertyReview", tokenVerify, async (req, res) => {
       const id = req.query.propertyId;
@@ -226,7 +244,7 @@ async function run() {
       res.send(result);
     });
     // create user
-    app.post("/api/users", tokenVerify, async (req, res) => {
+    app.post("/api/users", async (req, res) => {
       try {
         const userData = req.body;
         const email = req.query.email;
