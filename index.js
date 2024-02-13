@@ -86,16 +86,41 @@ async function run() {
       res.send(result);
     });
     // get all the properties
-    app.get("/api/getProperties",async (req, res) => {
+    app.get("/api/getProperties", async (req, res) => {
       const result = await propertiesCollection.find().toArray();
       res.send(result);
     });
     // get the properties that are verified
     app.get("/api/getVerifiedProperties", async (req, res) => {
-      const query = { propertyVerificationStatus: "verified" };
-      const result = await propertiesCollection.find(query).toArray();
+      const filter = req.query;
+      const search = filter?.search;
+      const priceSort = filter?.priceSort;
+      const priceRange = filter?.priceRange;
+      const minPrice = priceRange?.split("-")[0]||0;
+      const maxPrice = priceRange?.split("-")[1]||0;
+      console.log(maxPrice,minPrice);
+      console.log("search",search,"priceRange",priceRange,"priceSort",priceSort,"maxPrice",maxPrice,"minPrice",minPrice);
+      const query = {
+        propertyVerificationStatus: "verified",
+        propertyTitle: { $regex: search, $options: "i" },
+      };
+      if (minPrice) {
+        query.minPrice = { $gte: minPrice };
+      }
+      if (maxPrice) {
+        query.maxPrice = { $lte: maxPrice };
+      }
+      const sort = {};
+      if (priceSort) {
+        sort["minPrice"] = priceSort;
+      }
+      const result = await propertiesCollection
+        .find(query)
+        .sort(sort)
+        .toArray();
       res.send(result);
     });
+
     // get single properties with agent email
     app.get("/api/getProperty", tokenVerify, async (req, res) => {
       const email = req.query.email;
@@ -120,7 +145,7 @@ async function run() {
       res.send(result);
     });
     // get wishlist for make an offer
-    app.get("/api/getWish/:id", tokenVerify, async (req, res) => {
+    app.get("/api/getWish/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await wishCollection.findOne(query);
@@ -169,24 +194,33 @@ async function run() {
       const result = await propertiesCollection.find(query).toArray();
       res.send(result);
     });
+    // Get the Agent Detail For Agent Detail Page
+    app.get("/api/getAgentData/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = {
+        email: email,
+      };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
     app.patch("/api/agentRequest/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const options =  { upsert: true };
+      const options = { upsert: true };
       const agentReq = {
         $set: {
-          agentReq:"true"
+          agentReq: "true",
         },
       };
-      const result = await userCollection.updateOne(query, agentReq,options);
+      const result = await userCollection.updateOne(query, agentReq, options);
       res.send(result);
     });
 
-    app.get('/api/agentReq',async(req,res)=>{
-      const query = {agentReq : "true"}
-      const result = await userCollection.find(query).toArray()
-      res.send(result)
-    })
+    app.get("/api/agentReq", async (req, res) => {
+      const query = { agentReq: "true", role: "user" };
+      const result = await userCollection.find(query).toArray();
+      res.send(result);
+    });
     // Get review for specific property
     app.get("/api/getpropertyReview", tokenVerify, async (req, res) => {
       const id = req.query.propertyId;
@@ -224,9 +258,7 @@ async function run() {
     // update offer status
     app.patch("/api/updateOfferStatus/:id", tokenVerify, async (req, res) => {
       const updatedData = req.body;
-      console.log(updatedData.status);
       const id = req.params.id;
-      console.log(id);
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updateStatus = {
@@ -426,9 +458,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Bistro Boss Is Setting!");
+  res.send("Echo Estate Is Building Property!");
 });
 
 app.listen(port, () => {
-  console.log(`Bistro Boss Eating In Port ${port}`);
+  console.log(`Echo Estate Is Building Property At ${port}`);
 });
