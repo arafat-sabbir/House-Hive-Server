@@ -93,25 +93,33 @@ async function run() {
     // get the properties that are verified
     app.get("/api/getVerifiedProperties", async (req, res) => {
       const filter = req.query;
-      const search = filter?.search;
-      const priceSort = filter?.priceSort;
-      const priceRange = filter?.priceRange;
-      const minPrice = priceRange?.split("-")[0]||0;
-      const maxPrice = priceRange?.split("-")[1]||0;
-      console.log(maxPrice,minPrice);
-      console.log("search",search,"priceRange",priceRange,"priceSort",priceSort,"maxPrice",maxPrice,"minPrice",minPrice);
+
+      const searchText = filter?.search || "";
+      console.log(filter);
+      const priceSort = filter?.priceSort || "";
+      const priceRange = filter?.priceRange || "";
       const query = {
         propertyVerificationStatus: "verified",
-        propertyTitle: { $regex: search, $options: "i" },
       };
-      if (minPrice) {
-        query.minPrice = { $gte: minPrice };
+      if (searchText !== "Search By Property Title") {
+        query.propertyTitle = { $regex: searchText, $options: "i" };
       }
-      if (maxPrice) {
-        query.maxPrice = { $lte: maxPrice };
+
+      if (priceRange !== "All") {
+        if (priceRange !== "900000-Above") {
+          const minPrice = parseInt(priceRange?.split("-")[0]) || 0;
+          const maxPrice = parseInt(priceRange?.split("-")[1]) || 0;
+          query.minPrice = { $gte: minPrice };
+          query.maxPrice = { $lte: maxPrice };
+          console.log(priceRange);
+        } else if (priceRange == "900000-Above") {
+          const minPrice = parseInt(priceRange?.split("-")[0]) || 0;
+          query.minPrice = { $gte: minPrice };
+        }
       }
+
       const sort = {};
-      if (priceSort) {
+      if (priceSort !== "All") {
         sort["minPrice"] = priceSort;
       }
       const result = await propertiesCollection
@@ -204,12 +212,17 @@ async function run() {
       res.send(result);
     });
     app.patch("/api/agentRequest/:id", async (req, res) => {
+      const agentInfo = req.body;
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const agentReq = {
         $set: {
           agentReq: "true",
+          whatsapp: agentInfo.whatsapp,
+          linkedin: agentInfo.linkedin,
+          twitter: agentInfo.twitter,
+          facebook: agentInfo.facebook,
         },
       };
       const result = await userCollection.updateOne(query, agentReq, options);
