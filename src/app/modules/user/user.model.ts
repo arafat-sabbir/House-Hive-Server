@@ -14,5 +14,5 @@ const userSchema = new Schema<TUser>({
   facebook: { type: String },
 });
 
-const User = model<TUser>('User', userSchema);
-module.exports = User;
+const UserModel = model<TUser>('User', userSchema);
+export default UserModel;
