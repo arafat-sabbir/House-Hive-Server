@@ -5,6 +5,7 @@ const userSchema = new Schema<TUser>({
   name: String,
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
+  photo: { type: String, required: true },
   role: { type: String, default: 'user' },
   agentReq: { type: Schema.Types.ObjectId, ref: 'agentReq' },
   whatsapp: { type: String },
