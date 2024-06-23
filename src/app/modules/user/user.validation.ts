@@ -6,7 +6,7 @@ const createUserValidationSchema = z.object({
     email: z.string(),
     password: z.string(),
     photo: z.string(),
-    role: z.string(),
+    role: z.string().default("user"),
     agentReq: z.string().optional(),
     whatsapp: z.string().optional(),
     linkedin: z.string().optional(),
