@@ -17,5 +17,11 @@ const getSingle = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
-export const userController = { create,getSingle };
+const getAll = catchAsync(async (req, res) => {
+  const user = await userService.getAll();
+  sendResponse(res, {
+    message: 'User Retrieved Successfully',
+    data: user,
+  });
+});
+export const userController = { create, getSingle,getAll };

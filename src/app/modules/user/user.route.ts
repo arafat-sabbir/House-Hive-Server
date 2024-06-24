@@ -10,6 +10,9 @@ router.post(
   userController.create
 );
 
+router.get("/getUsers", userController.getAll);
 router.get('/getUser', userController.getSingle);
+
+
 
 export const userRoutes = router;

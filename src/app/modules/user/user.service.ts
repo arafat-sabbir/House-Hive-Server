@@ -1,3 +1,4 @@
+import AppError from '../../../app/errors/AppError';
 import { hashInfo } from '../../../app/utils/hashInfo';
 import { TUser } from './user.interface';
 import UserModel from './user.model';
@@ -15,10 +16,19 @@ const create = async (payload: TUser) => {
 const getSingle = async (email: string) => {
   const user = await UserModel.findOne({ email });
   if (!user) {
-    throw new Error('User not found');
+    throw new AppError(404,"No User Found")
   }
   const { password, ...result } = user.toJSON();
   return result;
 };
 
-export const userService = { create, getSingle };
+const getAll = async () => {
+  const user = await UserModel.find();
+  if(!user){
+    throw new AppError(404,"No User Found")
+  }  return user;
+};
+
+
+
+export const userService = { create, getSingle, getAll };
