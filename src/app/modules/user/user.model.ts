@@ -13,6 +13,7 @@ const userSchema = new Schema<TUser>(
     linkedin: { type: String },
     twitter: { type: String },
     facebook: { type: String },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -24,4 +24,12 @@ const getAll = catchAsync(async (req, res) => {
     data: user,
   });
 });
-export const userController = { create, getSingle,getAll };
+
+const getAccessToken = catchAsync(async (req, res) => {
+  const accessToken = await userService.getAccessToken(req.body._id);
+  sendResponse(res, {
+    message: 'User Retrieved Successfully',
+    data: accessToken,
+  });
+});
+export const userController = { create, getSingle, getAll, getAccessToken };
