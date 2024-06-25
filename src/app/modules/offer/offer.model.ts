@@ -3,26 +3,6 @@ import { TOffer } from './offer.interface';
 
 const offerSchema = new Schema<TOffer>(
   {
-    propertyTitle: {
-      type: String,
-      required: true,
-    },
-    propertyLocation: {
-      type: String,
-      required: true,
-    },
-    propertyImage: {
-      type: String,
-      required: true,
-    },
-    minPrice: {
-      type: Number,
-      required: true,
-    },
-    maxPrice: {
-      type: Number,
-      required: true,
-    },
     offeredPriceRange: {
       type: String,
       required: true,
