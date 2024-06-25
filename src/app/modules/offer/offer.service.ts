@@ -1,8 +1,8 @@
-import PropertyModel from '../property/property.model';
 import { TOffer } from './offer.interface';
+import OfferModel from './offer.model';
 
 const add = async (payload: TOffer) => {
-  const result = await PropertyModel.create(payload);
+  const result = await OfferModel.create(payload);
   return result;
 };
 

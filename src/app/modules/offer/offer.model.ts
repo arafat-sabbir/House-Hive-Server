@@ -4,13 +4,14 @@ import { TOffer } from './offer.interface';
 const offerSchema = new Schema<TOffer>(
   {
     offeredPrice: {
-      type: String,
+      type: Number,
       required: true,
     },
     buyer: { type: Schema.Types.ObjectId, ref: 'User' },
     offerStatus: {
       type: String,
       enum: ['accepted', 'rejected', 'pending'],
+      default:"pending",
       required: true,
     },
     property: {
