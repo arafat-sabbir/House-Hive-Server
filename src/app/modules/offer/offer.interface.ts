@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 
 export type TOffer = {
-    offeredPriceRange: string;
+    offeredPrice: string;
     buyer:Types.ObjectId;
     offerStatus: 'accepted' | 'rejected' | 'pending';
-    propertyId: Types.ObjectId;
+    property: Types.ObjectId;
   }

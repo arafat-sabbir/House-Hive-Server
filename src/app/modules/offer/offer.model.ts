@@ -3,7 +3,7 @@ import { TOffer } from './offer.interface';
 
 const offerSchema = new Schema<TOffer>(
   {
-    offeredPriceRange: {
+    offeredPrice: {
       type: String,
       required: true,
     },
@@ -13,7 +13,7 @@ const offerSchema = new Schema<TOffer>(
       enum: ['accepted', 'rejected', 'pending'],
       required: true,
     },
-    propertyId: {
+    property: {
       type: Schema.Types.ObjectId,
       ref: 'Property',
       required: true,
