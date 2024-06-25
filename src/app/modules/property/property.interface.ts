@@ -24,7 +24,7 @@ export type TProperty = {
     category: string;
     longitude: string;
     latitude: string;
-    advertiseStatus: 'advertise' | 'not advertise';
+    advertiseStatus: 'advertised' | 'not advertised';
     propertySize: number;
     addedDate: string;
     description: string;

@@ -25,7 +25,6 @@ const addPropertySchema = z.object({
         category: z.string(),
         longitude: z.string(),
         latitude: z.string(),
-        advertiseStatus: z.enum(['advertise', 'not advertise']),
         propertySize: z.number(),
         description: z.string(),
       })

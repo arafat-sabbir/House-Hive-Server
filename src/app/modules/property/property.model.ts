@@ -96,7 +96,8 @@ const propertySchema = new Schema(
     },
     advertiseStatus: {
       type: String,
-      enum: ['advertise', 'not advertise'],
+      enum: ['advertised', 'not advertised'],
+      default: 'not advertised',
       required: true,
     },
     propertySize: {
