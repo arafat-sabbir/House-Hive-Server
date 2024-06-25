@@ -1,0 +1,32 @@
+import { Types } from "mongoose";
+
+export type Property = {
+    propertyImage: string;
+    propertyTitle: string;
+    propertyLocation: string;
+    minPrice: number;
+    maxPrice: number;
+    propertyVerificationStatus: 'verified' | 'unverified';
+    agent:Types.ObjectId;
+    interiorFacilities: string[];
+    outdoorFacilities: string[];
+    otherFacilities: string[];
+    bedRooms: number;
+    bathRooms: number;
+    rooms: number;
+    builtYear: number;
+    associationFee: number;
+    yearlyTax: number;
+    upozila: string;
+    district: string;
+    division: string;
+    listedFor: 'For Sale' | 'For Rent';
+    category: string;
+    longitude: string;
+    latitude: string;
+    advertiseStatus: 'advertise' | 'not advertise';
+    propertySize: number;
+    addedDate: string;
+    description: string;
+  }
+  
