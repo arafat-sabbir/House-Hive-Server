@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const propertySchema = z.object({
+const addPropertySchema = z.object({
   propertyImage: z.string(),
   propertyTitle: z.string(),
   propertyLocation: z.string(),
@@ -29,4 +29,4 @@ const propertySchema = z.object({
   description: z.string(),
 });
 
-export default propertySchema;
+export const propertyValidation = { addPropertySchema };
