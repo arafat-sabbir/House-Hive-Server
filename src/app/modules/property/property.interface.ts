@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export type Property = {
+export type TProperty = {
     propertyImage: string;
     propertyTitle: string;
     propertyLocation: string;

@@ -103,10 +103,6 @@ const propertySchema = new Schema(
       type: Number,
       required: true,
     },
-    addedDate: {
-      type: String,
-      required: true,
-    },
     description: {
       type: String,
       required: true,
@@ -117,6 +113,6 @@ const propertySchema = new Schema(
   }
 );
 
-const Property = mongoose.model('Property', propertySchema);
+const PropertyModel = mongoose.model('Property', propertySchema);
 
-module.exports = Property;
+export default PropertyModel;
