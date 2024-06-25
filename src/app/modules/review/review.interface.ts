@@ -5,5 +5,4 @@ export type TReview = {
   property: Types.ObjectId;
   rating: number;
   review: string;
-  reviewDate: Date;
 };

@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
+import { TReview } from './review.interface';
 const { Schema } = mongoose;
 
-const reviewSchema = new Schema(
+const reviewSchema = new Schema<TReview>(
   {
     reviewer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     property: { type: Schema.Types.ObjectId, ref: 'Property', required: true },
@@ -11,5 +12,5 @@ const reviewSchema = new Schema(
   { timestamps: true }
 );
 
-const ReviewModel = mongoose.model('Review', reviewSchema);
+const ReviewModel = mongoose.model<TReview>('Review', reviewSchema);
 export default ReviewModel;
