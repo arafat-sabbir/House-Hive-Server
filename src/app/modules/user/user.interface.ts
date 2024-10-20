@@ -1,3 +1,10 @@
 export interface TUser {
-  // Add fields as needed
+  name: string;
+  email: string;
+  role: "user"|"admin"|"agent";
+  agentReq: boolean;
+  whatsapp?: string;
+  linkedin?: string;
+  twitter?: string;
+  facebook?: string;
 }
