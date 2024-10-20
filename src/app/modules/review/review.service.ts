@@ -1,15 +1,25 @@
-import UserModel from '../user/user.model';
-import { TReview } from './review.interface';
-import ReviewModel from './review.model';
+// Import the model
+import ReviewModel from './review.model'; 
 
-const create = async (payload: TReview) => {
-    const user = await UserModel.findById({_id:payload.reviewer});
-    if(!user){
-        throw new Error('User not found');
-    }
-    // const product = await
-  const review = (await ReviewModel.create(payload)).populate("reviewer property");
-  return review;
+// Service function to create a new review.
+const createReview = async (data: object) => {
+  const newReview = await ReviewModel.create(data);
+  return newReview;
 };
 
-export const reviewService = { create };
+
+// Service function to retrieve a single review by ID.
+const getReviewById = async (id: string) => {
+  return await ReviewModel.findById(id);
+};
+
+// Service function to retrieve multiple review based on query parameters.
+const getAllReview = async (query: object) => {
+  return await ReviewModel.find(query);
+};
+
+export const reviewServices = {
+  createReview,
+  getReviewById,
+  getAllReview,
+};

@@ -1,12 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const addOfferSchema = z.object({
-  body: z.object({
-    offeredPrice: z.number(),
-    buyer: z.string(),
-    offerStatus: z.enum(['accepted', 'rejected', 'pending']).default("pending").optional(),
-    property: z.string(),
-  }),
-});
+// Validation Schema For createOffer
+const createOfferSchema = z.object({
+  body:z.object({
 
-export const offerValidation = { addOfferSchema };
+  })
+})
+
+export const offerValidation = {
+  createOfferSchema
+}

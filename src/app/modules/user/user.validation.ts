@@ -1,18 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const createUserValidationSchema = z.object({
-  body: z.object({
-    name: z.string(),
-    email: z.string(),
-    password: z.string(),
-    photo: z.string(),
-    role: z.string().default("user"),
-    agentReq: z.string().optional(),
-    whatsapp: z.string().optional(),
-    linkedin: z.string().optional(),
-    twitter: z.string().optional(),
-    facebook: z.string().optional(),
-  }),
-});
+// Validation Schema For createUser
+const createUserSchema = z.object({
+  body:z.object({
 
-export const userValidation = { createUserValidationSchema };
+  })
+})
+
+export const userValidation = {
+  createUserSchema
+}

@@ -1,22 +1,21 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { TUser } from './user.interface';
 
-const userSchema = new Schema<TUser>(
-  {
-    name: String,
-    email: { type: String, unique: true, required: true },
-    password: { type: String, required: true, select: false },
-    photo: { type: String, required: true },
-    role: { type: String, default: 'user', enum: ['admin', 'user', 'agent'] },
-    agentReq: { type: Schema.Types.ObjectId, ref: 'agentReq' },
-    whatsapp: { type: String },
-    linkedin: { type: String },
-    twitter: { type: String },
-    facebook: { type: String },
-    isDeleted: { type: Boolean, default: false },
-  },
-  { timestamps: true }
-);
+// Define an interface representing a User document
 
-const UserModel = model<TUser>('User', userSchema);
+// Define the User schema
+const UserSchema: Schema<TUser> = new Schema({
+  // Define schema fields here
+  // Example fields (replace with actual schema)
+  // fieldName: {
+  //   type: Schema.Types.FieldType,
+  //   required: true,
+  //   trim: true,
+  // },
+},{timestamps:true,versionKey:false});
+
+// Create the User model
+const UserModel = mongoose.model<TUser>('User', UserSchema);
+
+// Export the User model
 export default UserModel;

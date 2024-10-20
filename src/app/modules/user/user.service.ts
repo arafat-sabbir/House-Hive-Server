@@ -1,52 +1,25 @@
-import jwt from 'jsonwebtoken';
-import AppError from '../../../app/errors/AppError';
-import { hashInfo } from '../../../app/utils/hashInfo';
-import { TUser } from './user.interface';
-import UserModel from './user.model';
-import config from '../../../app/config';
+// Import the model
+import UserModel from './user.model'; 
 
-const create = async (payload: TUser) => {
-  const existingUser = await UserModel.findOne({ email: payload.email });
-  if (existingUser) {
-    throw new Error('User already exists');
-  }
-  payload.password = hashInfo(payload.password);
-  const user = await UserModel.create(payload);
-  return user;
+// Service function to create a new user.
+const createUser = async (data: object) => {
+  const newUser = await UserModel.create(data);
+  return newUser;
 };
 
-const getSingle = async (email: string) => {
-  const user = await UserModel.findOne({ email });
-  if (!user) {
-    throw new AppError(404, 'No User Found');
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, ...result } = user.toJSON();
-  return result;
+
+// Service function to retrieve a single user by ID.
+const getUserById = async (id: string) => {
+  return await UserModel.findById(id);
 };
 
-const getAll = async () => {
-  const user = await UserModel.find();
-  if (!user) {
-    throw new AppError(404, 'No User Found');
-  }
-  return user;
+// Service function to retrieve multiple user based on query parameters.
+const getAllUser = async (query: object) => {
+  return await UserModel.find(query);
 };
 
-const getAccessToken = async (_id: string) => {
-  const user = await UserModel.findById({ _id });
-  if (!user) {
-    throw new AppError(404, 'No User Found');
-  }
-  const accessToken = jwt.sign(
-    { id: user.id, role: user.role },
-    config.jwt_access_secret as string,
-    {
-      expiresIn: '1d',
-    }
-  );
-
-  return accessToken;
+export const userServices = {
+  createUser,
+  getUserById,
+  getAllUser,
 };
-
-export const userService = { create, getSingle, getAll, getAccessToken };

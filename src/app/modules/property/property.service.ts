@@ -1,10 +1,25 @@
-import { TProperty } from './property.interface';
-import PropertyModel from './property.model';
+// Import the model
+import PropertyModel from './property.model'; 
 
-const add = async (property: TProperty) => {
-  const result = await (
-    await PropertyModel.create(property)
-  ).populate({ path: 'agent', select: '-password' });
-  return result;
+// Service function to create a new property.
+const createProperty = async (data: object) => {
+  const newProperty = await PropertyModel.create(data);
+  return newProperty;
 };
-export const propertyService = { add };
+
+
+// Service function to retrieve a single property by ID.
+const getPropertyById = async (id: string) => {
+  return await PropertyModel.findById(id);
+};
+
+// Service function to retrieve multiple property based on query parameters.
+const getAllProperty = async (query: object) => {
+  return await PropertyModel.find(query);
+};
+
+export const propertyServices = {
+  createProperty,
+  getPropertyById,
+  getAllProperty,
+};
